@@ -1,0 +1,11 @@
+# Minimal Supabase CLI config. Run `supabase link --project-ref <ref>` before deploying.
+project_id = "fix-or-shop"
+
+# The functions verify the user themselves (requireUser), so gateway JWT checks are off.
+[functions.diagnose]
+verify_jwt = false
+import_map = "./functions/deno.json"
+
+[functions.guide]
+verify_jwt = false
+import_map = "./functions/deno.json"
