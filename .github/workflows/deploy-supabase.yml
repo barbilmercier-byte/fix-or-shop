@@ -52,7 +52,7 @@ jobs:
         run: supabase link --project-ref "$PROJECT_ID"
 
       - name: Apply database migrations
-        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
+        run: supabase db push --remote --password "$SUPABASE_DB_PASSWORD"
 
       - name: Set Claude API key
         if: env.ANTHROPIC_API_KEY != ''
