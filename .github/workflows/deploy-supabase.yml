@@ -36,13 +36,20 @@ jobs:
           [ -z "$SUPABASE_DB_PASSWORD" ] && missing="$missing SUPABASE_DB_PASSWORD"
           [ -z "$PROJECT_ID" ] && missing="$missing SUPABASE_PROJECT_ID"
           if [ -n "$missing" ]; then echo "::error::Missing repository secrets:$missing"; exit 1; fi
+          case "$SUPABASE_ACCESS_TOKEN" in
+            sbp_*) ;;
+            *) echo "::error::SUPABASE_ACCESS_TOKEN should start with sbp_ (create one at supabase.com/dashboard/account/tokens)"; exit 1 ;;
+          esac
+          if ! echo "$PROJECT_ID" | grep -Eq '^[a-z]{20}$'; then
+            echo "::error::SUPABASE_PROJECT_ID should be the 20-letter Project ID from Project Settings > General"; exit 1
+          fi
 
       - uses: supabase/setup-cli@v1
         with:
           version: latest
 
       - name: Link project
-        run: supabase link --project-ref "$PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
+        run: supabase link --project-ref "$PROJECT_ID"
 
       - name: Apply database migrations
         run: supabase db push --password "$SUPABASE_DB_PASSWORD"
