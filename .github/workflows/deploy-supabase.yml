@@ -56,7 +56,7 @@ jobs:
 
       - name: Set Claude API key
         if: env.ANTHROPIC_API_KEY != ''
-        run: supabase secrets set ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" --project-ref "$PROJECT_ID"
+        run: supabase secrets set ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" --project-ref "$PROJECT_ID" --yes
 
       - name: Deploy Edge Functions
-        run: supabase functions deploy --project-ref "$PROJECT_ID"
+        run: supabase functions deploy --project-ref "$PROJECT_ID" --yes
