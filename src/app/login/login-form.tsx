@@ -11,6 +11,12 @@ function friendly(message: string) {
   return message;
 }
 
+// Google/Apple buttons only show once enabled in Supabase and listed here, e.g. "google,apple".
+const PROVIDERS = (process.env.NEXT_PUBLIC_AUTH_PROVIDERS ?? "")
+  .split(",")
+  .map((p) => p.trim())
+  .filter((p): p is "google" | "apple" => p === "google" || p === "apple");
+
 export function LoginForm({ next }: { next: string }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -84,15 +90,18 @@ export function LoginForm({ next }: { next: string }) {
 
   return (
     <div className="space-y-4">
-      <button type="button" className="btn-secondary w-full" onClick={() => oauth("google")}>
-        Continue with Google
-      </button>
-      <button type="button" className="btn-secondary w-full" onClick={() => oauth("apple")}>
-        Continue with Apple
-      </button>
-      <div className="flex items-center gap-3 text-xs muted">
-        <span className="h-px flex-1 bg-current opacity-20" /> or <span className="h-px flex-1 bg-current opacity-20" />
-      </div>
+      {PROVIDERS.length > 0 && (
+        <>
+          {PROVIDERS.map((p) => (
+            <button key={p} type="button" className="btn-secondary w-full" onClick={() => oauth(p)}>
+              Continue with {p === "google" ? "Google" : "Apple"}
+            </button>
+          ))}
+          <div className="flex items-center gap-3 text-xs muted">
+            <span className="h-px flex-1 bg-current opacity-20" /> or <span className="h-px flex-1 bg-current opacity-20" />
+          </div>
+        </>
+      )}
       <form onSubmit={sendLink} className="space-y-3">
         <label className="label" htmlFor="email">
           Email
