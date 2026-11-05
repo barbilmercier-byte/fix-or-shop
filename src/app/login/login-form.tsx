@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { createEmailLinkClient } from "@/lib/supabase/email-link";
 
 function friendly(message: string) {
   if (/rate limit/i.test(message)) return "Too many emails were sent. Please wait an hour, or use the last code you received.";
@@ -31,7 +32,10 @@ export function LoginForm({ next }: { next: string }) {
     e.preventDefault();
     setError("");
     setStatus("sending");
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo() } });
+    const { error } = await createEmailLinkClient().auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/link?next=${encodeURIComponent(safeNext)}` },
+    });
     if (error) {
       setStatus("idle");
       setError(friendly(error.message));
@@ -66,9 +70,10 @@ export function LoginForm({ next }: { next: string }) {
         <div>
           <p className="font-semibold">Check your email</p>
           <p className="mt-1 text-sm muted">
-            We sent a message to {email}. Tap the link in it, or type the code from the email here.
+            We sent a sign-in link to {email}. Open the email on this phone or computer and tap the link.
           </p>
         </div>
+        <p className="text-xs muted">If your email shows a code instead, type it here:</p>
         <input
           inputMode="numeric"
           autoComplete="one-time-code"
