@@ -10,7 +10,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       </div>
       {error && (
         <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-200">
-          That sign-in link didn&apos;t work. Please request a new one.
+          {typeof error === "string" && error !== "1" ? error : "That sign-in link didn't work."} Please try again.
         </p>
       )}
       <LoginForm next={typeof next === "string" ? next : "/garage"} />
